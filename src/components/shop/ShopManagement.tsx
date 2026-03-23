@@ -19,7 +19,7 @@ export default function ShopManagement({ products, categories }: ShopManagementP
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "archived">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "archived">("all"); // state archived
   const [showConfirm, setShowConfirm] = useState(false);
   const [removingProductId, setRemovingProductId] = useState<number | null>(null);
   const [imageIndex, setImageIndex] = useState<{ [productId: number]: number }>({});
