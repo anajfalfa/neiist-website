@@ -64,7 +64,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       stock_type: body.stock_type,
       stock_quantity: body.stock_quantity,
       order_deadline: body.order_deadline,
-      active: true,
+      active: body.active ?? true,
     });
 
     if (Array.isArray(body.variants) && body.variants.length > 0) {

@@ -9,6 +9,7 @@ export interface Product {
   stock_quantity?: number;
   order_deadline?: string;
   variants: ProductVariant[];
+  active: boolean;
 }
 
 export interface dbProduct {
@@ -22,6 +23,7 @@ export interface dbProduct {
   stock_quantity: number | null;
   order_deadline: string | null;
   variants: dbProductVariant[] | null;
+  active: boolean;
 }
 
 export interface ProductVariant {
@@ -225,6 +227,7 @@ export function mapdbProductToProduct(row: dbProduct): Product {
     stock_type: row.stock_type as Product["stock_type"],
     stock_quantity: row.stock_quantity ?? undefined,
     order_deadline: row.order_deadline ?? undefined,
+    active: Boolean(row.active),
     variants: (row.variants ?? []).map(
       (v): ProductVariant => ({
         id: v.id,

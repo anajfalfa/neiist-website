@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
@@ -21,6 +21,7 @@ interface ProductFormProps {
   isEdit?: boolean;
   onBack: () => void;
   categories: Category[];
+  active: boolean;
 }
 
 type VariantForm = {
@@ -45,6 +46,7 @@ export default function ProductForm({
   const [category, setCategory] = useState(product?.category || "");
   const [stockType, setStockType] = useState(product?.stock_type || "limited");
   const [stockQuantity, setStockQuantity] = useState(product?.stock_quantity || 0);
+  const [active, setActive] = useState(product?.active ?? true);
 
   const [orderDeadline, setOrderDeadline] = useState<Date | undefined>(
     product?.order_deadline ? new Date(product.order_deadline) : undefined
@@ -308,6 +310,7 @@ export default function ProductForm({
         imageUploads,
         variants: variantsWithUploads,
         order_deadline: orderDeadline ? orderDeadline.toISOString() : null,
+        active: active,
       };
 
       const url = isEdit ? `/api/shop/products/${product?.id}` : "/api/shop/products";
@@ -684,6 +687,17 @@ export default function ProductForm({
             </div>
           ))}
         </div>
+      </div>
+
+      <div className={styles.section}>
+        <label className={styles.checkboxLabel}>
+          <input
+            type="checkbox"
+            checked={active}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setActive(e.target.checked)}
+          />
+          Produto Ativo (arquivar se desmarcado)
+        </label>
       </div>
 
       <button type="submit" className={styles.button} disabled={uploading}>

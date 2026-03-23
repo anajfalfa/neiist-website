@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, ChangeEvent } from "react";
 import Image from "next/image";
 import { FaPlus, FaEdit } from "react-icons/fa";
 import { FiTrash2 } from "react-icons/fi";
@@ -19,6 +19,7 @@ export default function ShopManagement({ products, categories }: ShopManagementP
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "archived">("all");
   const [showConfirm, setShowConfirm] = useState(false);
   const [removingProductId, setRemovingProductId] = useState<number | null>(null);
   const [imageIndex, setImageIndex] = useState<{ [productId: number]: number }>({});
@@ -44,8 +45,13 @@ export default function ShopManagement({ products, categories }: ShopManagementP
         .map((r) => r.item)
         .filter((products) => categoryFilter === "all" || products.category === categoryFilter);
     }
+    if (statusFilter === "active") {
+      filtered = filtered.filter((p) => p.active);
+    } else if (statusFilter === "archived") {
+      filtered = filtered.filter((p) => !p.active);
+    }
     return filtered;
-  }, [products, search, categoryFilter, fuse]);
+  }, [products, search, categoryFilter, statusFilter, fuse]);
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
@@ -78,6 +84,24 @@ export default function ShopManagement({ products, categories }: ShopManagementP
       }
       setShowConfirm(false);
       setRemovingProductId(null);
+    }
+  };
+  const handleToggleArchive = async (product: Product) => {
+    try {
+      const response = await fetch(`/api/shop/products/${product.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...product, active: !product.active }),
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        const error = await response.json();
+        console.error("Error toggling archive status:", error);
+      }
+    } catch (error) {
+      console.error("Error toggling archive status:", error);
     }
   };
 
@@ -166,11 +190,19 @@ export default function ShopManagement({ products, categories }: ShopManagementP
               </option>
             ))}
           </select>
+          <select
+            className={styles.statusFilter}
+            value={statusFilter}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value as any)}>
+            <option value="all">Todos os Estados</option>
+            <option value="active">Ativos</option>
+            <option value="archived">Arquivados</option>
+          </select>
         </div>
 
         <div className={styles.grid}>
           {filteredProducts.map((product) => (
-            <div key={product.id} className={styles.card}>
+            <div key={product.id} className={`${styles.card} ${!product.active ? styles.archived : ""}`}>
               <div className={styles.imageContainer}>
                 {product.images && product.images.length > 0 ? (
                   <Image
@@ -228,6 +260,11 @@ export default function ShopManagement({ products, categories }: ShopManagementP
                 <div className={styles.actions}>
                   <button onClick={() => handleEdit(product)}>
                     <FaEdit /> Editar
+                  </button>
+                  <button
+                    className={product.active ? styles.archiveBtn : styles.unarchiveBtn}
+                    onClick={() => handleToggleArchive(product)}>
+                    {product.active ? "Arquivar" : "Desarquivar"}
                   </button>
                   <button onClick={() => handleRemove(product.id)}>
                     <FiTrash2 /> Remover

@@ -150,6 +150,45 @@
   color: white;
 }
 
+.archived {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+  position: relative;
+}
+
+.archived::after {
+  content: "ARQUIVADO";
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #666;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.statusFilter {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-colour);
+  background: var(--card-background-colour);
+  color: var(--foreground-colour);
+}
+
+.archiveBtn {
+  background: #f44336;
+  color: white;
+}
+
+.unarchiveBtn {
+  background: #4caf50;
+  color: white;
+}
+
 .cardContent {
   padding: 1.5rem;
   flex: 1;

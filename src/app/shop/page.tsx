@@ -7,7 +7,7 @@ export default async function ShopPage() {
 
   return (
     <div className={styles.content}>
-      <ShopProductList products={products} categories={categories} />
+      <ShopProductList products={products.filter((p) => p.active)} categories={categories} />
     </div>
   );
 }
